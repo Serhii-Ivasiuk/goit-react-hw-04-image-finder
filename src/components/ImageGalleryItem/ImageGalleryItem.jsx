@@ -1,7 +1,9 @@
-export const ImageGalleryItem = () => {
+export const ImageGalleryItem = ({ imageData }) => {
+  const { webformatURL, tags } = imageData;
+
   return (
     <li className="ImageGalleryItem">
-      <img src="" alt="" className="ImageGalleryItem-image" />
+      <img src={webformatURL} alt={tags} className="ImageGalleryItem-image" />
     </li>
   );
 };

@@ -1,30 +1,23 @@
+// Libs
 import { Component } from 'react';
+// React components
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Button } from './Button/Button';
-import { Loader } from './Loader/Loader';
-// import { Modal } from './Modal/Modal';
 
 export class App extends Component {
-  state = {};
+  state = { searchQuery: '' };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    console.log('Сбмит формы - handleSubmit');
-  };
-
-  handleLoadMore = () => {
-    console.log('Клик по Load more - handleLoadMore');
+  handleSubmit = query => {
+    this.setState({ searchQuery: query });
   };
 
   render() {
+    const { searchQuery } = this.state;
+
     return (
       <div className="App">
         <Searchbar onSubmit={this.handleSubmit} />
-        <ImageGallery />
-        <Button onClick={this.handleLoadMore} />
-        <Loader />
-        {/* <Modal /> */}
+        <ImageGallery query={searchQuery} />
       </div>
     );
   }
