@@ -9,55 +9,106 @@ import { Loader } from '../Loader/Loader';
 import * as API from '../../services/pixabay-api';
 
 export class ImageGallery extends Component {
-  state = { data: [], page: 1, status: 'idle' };
+  state = {
+    data: [],
+    page: 1,
+    errorMessage: '',
+    isLoading: false,
+    endResults: false,
+  };
 
   async componentDidUpdate(prevProps, prevState) {
     const { query } = this.props;
     const { page } = this.state;
 
     const initialPage = 1;
+    const perPage = 12;
 
     if (prevProps.query !== query) {
-      console.log('ImageGallery >>> обновились пропсы');
+      try {
+        this.setState({ isLoading: true });
 
-      this.setState({ status: 'pending' });
+        const response = await API.getImages(query, initialPage);
 
-      const response = await API.getImages(query, initialPage);
+        if (response.total === 0) {
+          throw new Error('There is no images matching your request');
+        } else if (response.totalHits <= page * perPage) {
+          this.setState({
+            endResults: true,
+          });
+        } else {
+          this.setState({
+            endResults: false,
+          });
+        }
 
-      this.setState({
-        data: response.hits,
-        page: initialPage,
-        status: 'resolved',
-      });
-
-      return;
+        this.setState({
+          errorMessage: '',
+          data: response.hits,
+          page: initialPage,
+        });
+      } catch (error) {
+        this.setState({
+          errorMessage: error.message,
+        });
+      } finally {
+        this.setState({
+          isLoading: false,
+        });
+      }
     }
 
     if (prevState.page !== page && page !== initialPage) {
-      console.log('ImageGallery >>> обновился стейт');
+      try {
+        this.setState({ isLoading: true });
 
-      const response = await API.getImages(query, page);
+        const response = await API.getImages(query, page);
 
-      this.setState(prevState => {
-        return { data: [...prevState.data, ...response.hits] };
-      });
+        if (response.totalHits <= page * perPage) {
+          this.setState({
+            endResults: true,
+          });
+        }
+
+        this.setState(prevState => {
+          return {
+            data: [...prevState.data, ...response.hits],
+            isLoading: false,
+          };
+        });
+      } catch (error) {
+        this.setState({
+          errorMessage: error.message,
+        });
+      }
     }
   }
 
   handleLoadMore = async () => {
-    // console.log('ImageGallery >>> клик по load more');
-
     this.setState(prevState => {
       return { page: prevState.page + 1 };
     });
   };
 
   render() {
-    const { data, status } = this.state;
+    const { data, isLoading, errorMessage, endResults } = this.state;
 
     return (
-      <div>
-        {status === 'resolved' && (
+      <>
+        {errorMessage && !isLoading && (
+          <p style={{ fontSize: 32, fontWeight: 700, textAlign: 'center' }}>
+            {errorMessage}
+          </p>
+        )}
+
+        {data.length === 0 && !isLoading && !errorMessage && (
+          <p style={{ fontSize: 32, fontWeight: 700, textAlign: 'center' }}>
+            Let's find some images for you. <br /> Please enter your request in
+            the field above.
+          </p>
+        )}
+
+        {data.length > 0 && !errorMessage && (
           <ul className="ImageGallery">
             {data.map(item => (
               <ImageGalleryItem key={item.id} imageData={item} />
@@ -65,12 +116,20 @@ export class ImageGallery extends Component {
           </ul>
         )}
 
-        {status === 'pending' && <Loader />}
+        {endResults && !isLoading && !errorMessage && (
+          <p style={{ fontSize: 32, fontWeight: 700, textAlign: 'center' }}>
+            You reached the end of search results.
+          </p>
+        )}
 
-        {status === 'resolved' && <Button onClick={this.handleLoadMore} />}
+        {isLoading && <Loader />}
+
+        {data.length > 0 && !isLoading && !endResults && !errorMessage && (
+          <Button onClick={this.handleLoadMore} />
+        )}
 
         {/* <Modal /> */}
-      </div>
+      </>
     );
   }
 }

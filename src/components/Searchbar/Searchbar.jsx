@@ -23,8 +23,6 @@ export class Searchbar extends Component {
       return;
     }
 
-    // console.log('Searchbar >>> сабмит формы');
-
     onSubmit(searchQuery);
 
     // this.setState({ searchQuery: '' });
