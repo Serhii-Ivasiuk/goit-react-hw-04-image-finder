@@ -1,6 +1,10 @@
+// Libs
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export class Searchbar extends Component {
+  static propTypes = { onSubmit: PropTypes.func.isRequired };
+
   state = { searchQuery: '' };
 
   handleInput = event => {

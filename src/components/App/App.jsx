@@ -1,12 +1,12 @@
 // Libs
 import { Component } from 'react';
 // React components
-import { Searchbar } from './Searchbar/Searchbar';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Button } from './Button/Button';
-import { Loader } from './Loader/Loader';
+import { Searchbar } from '../Searchbar/Searchbar';
+import { ImageGallery } from '../ImageGallery/ImageGallery';
+import { Button } from '../Button/Button';
+import { Loader } from '../Loader/Loader';
 // Services
-import * as API from '../services/pixabay-api';
+import * as API from '../../services/pixabay-api';
 
 export class App extends Component {
   state = {
@@ -34,7 +34,9 @@ export class App extends Component {
         });
 
         if (response.total === 0) {
-          throw new Error('There is no images matching your request');
+          throw new Error(
+            `There is no images matching your request: "${searchQuery}"`
+          );
         }
 
         if (response.totalHits <= page * API.perPage) {
@@ -55,12 +57,21 @@ export class App extends Component {
   }
 
   handleSubmit = query => {
+    const { searchQuery } = this.state;
+
     const initialStateParams = {
       page: 1,
       data: [],
       errorMessage: '',
       endResults: false,
     };
+
+    if (query === searchQuery) {
+      alert(
+        'The same serch reques was detected. You need to change you search request.'
+      );
+      return;
+    }
 
     this.setState({ ...initialStateParams, searchQuery: query });
   };

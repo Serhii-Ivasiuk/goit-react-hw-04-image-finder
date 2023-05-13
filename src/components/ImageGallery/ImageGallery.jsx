@@ -1,3 +1,5 @@
+// Libs
+import PropTypes from 'prop-types';
 // React components
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 
@@ -9,4 +11,9 @@ export const ImageGallery = ({ data }) => {
       ))}
     </ul>
   );
+};
+
+ImageGallery.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.number.isRequired }))
+    .isRequired,
 };
