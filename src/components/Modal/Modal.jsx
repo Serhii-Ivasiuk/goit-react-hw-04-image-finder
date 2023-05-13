@@ -15,13 +15,13 @@ export class Modal extends Component {
   componentDidMount() {
     document.addEventListener('keydown', this.handleEscKeydown);
 
-    document.documentElement.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleEscKeydown);
 
-    document.documentElement.overflow = 'unset';
+    document.documentElement.style.overflow = 'unset';
   }
 
   handleEscKeydown = e => {
