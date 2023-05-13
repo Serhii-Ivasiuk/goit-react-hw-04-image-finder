@@ -1,6 +1,9 @@
 // Libs
 import { Component } from 'react';
+import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
+
+const modalRootPortal = document.querySelector('#modal-root');
 export class Modal extends Component {
   static propTypes = {
     largeImageURL: PropTypes.string.isRequired,
@@ -33,12 +36,13 @@ export class Modal extends Component {
   render() {
     const { largeImageURL, tags } = this.props;
 
-    return (
+    return createPortal(
       <div className="Overlay" onClick={this.handleBackdropClick}>
         <div className="Modal">
           <img src={largeImageURL} alt={tags} />
         </div>
-      </div>
+      </div>,
+      modalRootPortal
     );
   }
 }
