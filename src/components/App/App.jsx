@@ -5,6 +5,8 @@ import { Searchbar } from '../Searchbar/Searchbar';
 import { ImageGallery } from '../ImageGallery/ImageGallery';
 import { Button } from '../Button/Button';
 import { Loader } from '../Loader/Loader';
+// Styled components
+import { AppContainer } from './App.styled';
 // Services
 import * as API from '../../services/pixabay-api';
 
@@ -67,9 +69,7 @@ export class App extends Component {
     };
 
     if (query === searchQuery) {
-      alert(
-        'The same serch reques was detected. You need to change you search request.'
-      );
+      alert('The same request was detected. Please change you search query.');
       return;
     }
 
@@ -86,7 +86,7 @@ export class App extends Component {
     const { data, isLoading, errorMessage, endResults } = this.state;
 
     return (
-      <div className="App">
+      <AppContainer>
         <Searchbar onSubmit={this.handleSubmit} />
 
         {data.length > 0 && !errorMessage && <ImageGallery data={data} />}
@@ -112,10 +112,10 @@ export class App extends Component {
 
         {isLoading && <Loader />}
 
-        {data.length > 0 && !isLoading && !endResults && !errorMessage && (
+        {data.length > 0 && !endResults && !errorMessage && (
           <Button onClick={this.handleLoadMore} />
         )}
-      </div>
+      </AppContainer>
     );
   }
 }

@@ -3,6 +3,8 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 // React components
 import { Modal } from '../Modal/Modal';
+// Styled components
+import { GalleryCard, GalleryImage } from './ImageGalleryItem.styled';
 
 export class ImageGalleryItem extends Component {
   static propTypes = {
@@ -31,14 +33,13 @@ export class ImageGalleryItem extends Component {
 
     return (
       <>
-        <li className="ImageGalleryItem">
-          <img
+        <GalleryCard>
+          <GalleryImage
             src={webformatURL}
             alt={tags}
-            className="ImageGalleryItem-image"
             onClick={this.handleModalOpen}
           />
-        </li>
+        </GalleryCard>
 
         {isModalOpen && (
           <Modal

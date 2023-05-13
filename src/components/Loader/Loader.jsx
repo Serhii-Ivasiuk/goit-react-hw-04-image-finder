@@ -1,9 +1,11 @@
 // Libs
 import { MagnifyingGlass } from 'react-loader-spinner';
+// Styled components
+import { LoaderWrapper } from './Loader.styled';
 
 export const Loader = () => {
   return (
-    <div style={{ textAlign: 'center' }}>
+    <LoaderWrapper>
       <MagnifyingGlass
         visible={true}
         height="80"
@@ -14,6 +16,6 @@ export const Loader = () => {
         glassColor="#c0efff"
         color="#e15b64"
       />
-    </div>
+    </LoaderWrapper>
   );
 };
