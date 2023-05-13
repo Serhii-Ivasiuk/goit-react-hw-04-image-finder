@@ -1,10 +1,13 @@
 // Libs
+import { createPortal } from 'react-dom';
 import { MagnifyingGlass } from 'react-loader-spinner';
 // Styled components
 import { LoaderWrapper } from './Loader.styled';
 
 export const Loader = () => {
-  return (
+  const backdropRootPortal = document.querySelector('#backdrop-root');
+
+  return createPortal(
     <LoaderWrapper>
       <MagnifyingGlass
         visible={true}
@@ -16,6 +19,7 @@ export const Loader = () => {
         glassColor="#c0efff"
         color="#e15b64"
       />
-    </LoaderWrapper>
+    </LoaderWrapper>,
+    backdropRootPortal
   );
 };

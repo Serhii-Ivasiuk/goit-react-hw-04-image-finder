@@ -1,6 +1,8 @@
 // Libs
 import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // Styled components
 import {
   Header,
@@ -30,7 +32,7 @@ export class Searchbar extends Component {
     if (searchQuery.trim() === '') {
       this.setState({ searchQuery: '' });
 
-      alert('Please, enter yor search request.');
+      toast.info('Please, enter yor search request.');
 
       return;
     }

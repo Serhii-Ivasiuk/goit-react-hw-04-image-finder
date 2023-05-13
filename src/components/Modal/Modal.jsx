@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 // Styled components
 import { Overlay, ModalWindow } from './Modal.styled';
 
-const modalRootPortal = document.querySelector('#modal-root');
 export class Modal extends Component {
   static propTypes = {
     largeImageURL: PropTypes.string.isRequired,
@@ -41,6 +40,7 @@ export class Modal extends Component {
 
   render() {
     const { largeImageURL, tags } = this.props;
+    const backdropRootPortal = document.querySelector('#backdrop-root');
 
     return createPortal(
       <Overlay onClick={this.handleBackdropClick}>
@@ -48,7 +48,7 @@ export class Modal extends Component {
           <img src={largeImageURL} alt={tags} />
         </ModalWindow>
       </Overlay>,
-      modalRootPortal
+      backdropRootPortal
     );
   }
 }

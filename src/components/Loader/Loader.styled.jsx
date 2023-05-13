@@ -12,4 +12,6 @@ export const LoaderWrapper = styled.div`
   align-items: center;
   padding-top: 72px;
   background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  z-index: 1200;
 `;

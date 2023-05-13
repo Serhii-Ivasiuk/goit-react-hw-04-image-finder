@@ -9,7 +9,7 @@ export const GalleryCard = styled.li`
 
 export const GalleryImage = styled.img`
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 220px;
   object-fit: cover;
   transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
 

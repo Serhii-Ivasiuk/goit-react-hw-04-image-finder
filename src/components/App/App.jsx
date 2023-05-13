@@ -1,10 +1,13 @@
 // Libs
 import { Component } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // React components
 import { Searchbar } from '../Searchbar/Searchbar';
 import { ImageGallery } from '../ImageGallery/ImageGallery';
 import { Button } from '../Button/Button';
 import { Loader } from '../Loader/Loader';
+import { MessageWpapper } from '../ErrorMessage/ErrorMessage';
 // Styled components
 import { AppContainer } from './App.styled';
 // Services
@@ -69,7 +72,9 @@ export class App extends Component {
     };
 
     if (query === searchQuery) {
-      alert('The same request was detected. Please change you search query.');
+      toast.error(
+        'The same request was detected. Please change you search query.'
+      );
       return;
     }
 
@@ -92,22 +97,20 @@ export class App extends Component {
         {data.length > 0 && !errorMessage && <ImageGallery data={data} />}
 
         {errorMessage && !isLoading && (
-          <p style={{ fontSize: 32, fontWeight: 700, textAlign: 'center' }}>
-            {errorMessage}
-          </p>
+          <MessageWpapper>{errorMessage}</MessageWpapper>
         )}
 
         {data.length === 0 && !isLoading && !errorMessage && (
-          <p style={{ fontSize: 32, fontWeight: 700, textAlign: 'center' }}>
+          <MessageWpapper>
             Let's find some images for you. <br /> Please enter your request in
             the field above.
-          </p>
+          </MessageWpapper>
         )}
 
         {endResults && !isLoading && !errorMessage && (
-          <p style={{ fontSize: 32, fontWeight: 700, textAlign: 'center' }}>
+          <MessageWpapper>
             You reached the end of search results.
-          </p>
+          </MessageWpapper>
         )}
 
         {isLoading && <Loader />}
@@ -115,6 +118,7 @@ export class App extends Component {
         {data.length > 0 && !endResults && !errorMessage && (
           <Button onClick={this.handleLoadMore} />
         )}
+        <ToastContainer autoClose={3000} theme="colored" />
       </AppContainer>
     );
   }
