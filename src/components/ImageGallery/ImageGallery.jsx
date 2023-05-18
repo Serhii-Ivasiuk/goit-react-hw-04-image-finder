@@ -7,7 +7,7 @@ import { Gallery } from './ImageGallery.styled';
 
 export const ImageGallery = ({ data }) => {
   return (
-    <Gallery className="ImageGallery">
+    <Gallery Name="ImageGallery">
       {data.map(item => (
         <ImageGalleryItem key={item.id} imageData={item} />
       ))}

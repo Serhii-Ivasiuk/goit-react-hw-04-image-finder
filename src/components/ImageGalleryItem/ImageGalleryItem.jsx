@@ -1,54 +1,45 @@
 // Libs
-import { Component } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 // React components
 import { Modal } from '../Modal/Modal';
 // Styled components
 import { GalleryCard, GalleryImage } from './ImageGalleryItem.styled';
 
-export class ImageGalleryItem extends Component {
-  static propTypes = {
-    imageData: PropTypes.shape({
-      webformatURL: PropTypes.string.isRequired,
-      tags: PropTypes.string.isRequired,
-      largeImageURL: PropTypes.string.isRequired,
-    }).isRequired,
+export const ImageGalleryItem = ({
+  imageData: { webformatURL, tags, largeImageURL },
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
   };
 
-  state = {
-    isModalOpen: false,
+  const handleModalClose = () => {
+    setIsModalOpen(false);
   };
 
-  handleModalOpen = () => {
-    this.setState({ isModalOpen: true });
-  };
+  return (
+    <>
+      <GalleryCard>
+        <GalleryImage src={webformatURL} alt={tags} onClick={handleModalOpen} />
+      </GalleryCard>
 
-  handleModalClose = () => {
-    this.setState({ isModalOpen: false });
-  };
+      {isModalOpen && (
+        <Modal
+          largeImageURL={largeImageURL}
+          tags={tags}
+          onClose={handleModalClose}
+        />
+      )}
+    </>
+  );
+};
 
-  render() {
-    const { webformatURL, tags, largeImageURL } = this.props.imageData;
-    const { isModalOpen } = this.state;
-
-    return (
-      <>
-        <GalleryCard>
-          <GalleryImage
-            src={webformatURL}
-            alt={tags}
-            onClick={this.handleModalOpen}
-          />
-        </GalleryCard>
-
-        {isModalOpen && (
-          <Modal
-            largeImageURL={largeImageURL}
-            tags={tags}
-            onClose={this.handleModalClose}
-          />
-        )}
-      </>
-    );
-  }
-}
+ImageGalleryItem.propTypes = {
+  imageData: PropTypes.shape({
+    webformatURL: PropTypes.string.isRequired,
+    tags: PropTypes.string.isRequired,
+    largeImageURL: PropTypes.string.isRequired,
+  }).isRequired,
+};

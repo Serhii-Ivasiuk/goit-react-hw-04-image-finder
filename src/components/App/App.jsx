@@ -1,5 +1,5 @@
 // Libs
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // React components
@@ -13,113 +13,88 @@ import { AppContainer } from './App.styled';
 // Services
 import * as API from '../../services/pixabay-api';
 
-export class App extends Component {
-  state = {
-    searchQuery: '',
-    data: [],
-    page: 1,
-    errorMessage: '',
-    isLoading: false,
-    endResults: false,
-  };
+import React from 'react';
 
-  async componentDidUpdate(_, prevState) {
-    const { searchQuery, page } = this.state;
+export const App = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [endResults, setEndResults] = useState(false);
 
-    if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
-      try {
-        this.setState({ isLoading: true });
+  useEffect(() => {
+    if (searchQuery === '') return;
 
-        const response = await API.getImages(searchQuery, page);
+    setIsLoading(true);
 
-        this.setState(prevState => {
-          return {
-            data: [...prevState.data, ...response.hits],
-          };
-        });
+    API.getImages(searchQuery, page)
+      .then(response => {
+        setData(prevData => [...prevData, ...response.hits]);
 
-        if (response.total === 0) {
+        if (response.totalHits === 0) {
           throw new Error(
             `There is no images matching your request: "${searchQuery}"`
           );
         }
 
         if (response.totalHits <= page * API.perPage) {
-          this.setState({
-            endResults: true,
-          });
+          setEndResults(true);
         }
-      } catch (error) {
-        this.setState({
-          errorMessage: error.message,
-        });
-      } finally {
-        this.setState({
-          isLoading: false,
-        });
-      }
-    }
-  }
+      })
+      .catch(error => {
+        setErrorMessage(error.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [searchQuery, page]);
 
-  handleSubmit = query => {
-    const { searchQuery } = this.state;
-
-    const initialStateParams = {
-      page: 1,
-      data: [],
-      errorMessage: '',
-      endResults: false,
-    };
-
+  const handleSubmit = query => {
     if (query === searchQuery) {
       toast.error(
         'The same request was detected. Please change you search query.'
       );
-      return;
+    } else {
+      setSearchQuery(query);
+      setPage(1);
+      setData([]);
+      setErrorMessage('');
+      setEndResults(false);
     }
-
-    this.setState({ ...initialStateParams, searchQuery: query });
   };
 
-  handleLoadMore = () => {
-    this.setState(prevState => {
-      return { page: prevState.page + 1 };
-    });
+  const handleLoadMore = () => {
+    setPage(prevPage => prevPage + 1);
   };
 
-  render() {
-    const { data, isLoading, errorMessage, endResults } = this.state;
+  return (
+    <AppContainer>
+      <Searchbar onSubmit={handleSubmit} />
 
-    return (
-      <AppContainer>
-        <Searchbar onSubmit={this.handleSubmit} />
+      {data.length > 0 && !errorMessage && <ImageGallery data={data} />}
 
-        {data.length > 0 && !errorMessage && <ImageGallery data={data} />}
+      {errorMessage && !isLoading && (
+        <MessageWpapper>{errorMessage}</MessageWpapper>
+      )}
 
-        {errorMessage && !isLoading && (
-          <MessageWpapper>{errorMessage}</MessageWpapper>
-        )}
+      {data.length === 0 && !isLoading && !errorMessage && (
+        <MessageWpapper>
+          Let's find some images for you. <br /> Please enter your request in
+          the field above.
+        </MessageWpapper>
+      )}
 
-        {data.length === 0 && !isLoading && !errorMessage && (
-          <MessageWpapper>
-            Let's find some images for you. <br /> Please enter your request in
-            the field above.
-          </MessageWpapper>
-        )}
+      {endResults && !isLoading && !errorMessage && (
+        <MessageWpapper>You reached the end of search results.</MessageWpapper>
+      )}
 
-        {endResults && !isLoading && !errorMessage && (
-          <MessageWpapper>
-            You reached the end of search results.
-          </MessageWpapper>
-        )}
+      {isLoading && <Loader />}
 
-        {isLoading && <Loader />}
-
-        {data.length > 0 && !endResults && !errorMessage && (
-          <Button onClick={this.handleLoadMore} />
-        )}
-        <ToastContainer autoClose={3000} theme="colored" />
-      </AppContainer>
-    );
-  }
-}
+      {data.length > 0 && !endResults && !errorMessage && (
+        <Button onClick={handleLoadMore} />
+      )}
+      <ToastContainer autoClose={3000} theme="colored" />
+    </AppContainer>
+  );
+};

@@ -1,54 +1,51 @@
 // Libs
-import { Component } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 // Styled components
 import { Overlay, ModalWindow } from './Modal.styled';
 
-export class Modal extends Component {
-  static propTypes = {
-    largeImageURL: PropTypes.string.isRequired,
-    tags: PropTypes.string.isRequired,
-    onClose: PropTypes.func.isRequired,
-  };
+import React from 'react';
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleEscKeydown);
+export const Modal = ({ largeImageURL, tags, onClose }) => {
+  useEffect(() => {
+    const handleEscKeydown = evt => {
+      const KEY_CODE = 'Escape';
 
+      if (evt.key === KEY_CODE) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKeydown);
     document.documentElement.style.overflow = 'hidden';
-  }
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleEscKeydown);
+    return () => {
+      document.removeEventListener('keydown', handleEscKeydown);
+      document.documentElement.style.overflow = 'unset';
+    };
+  }, [onClose]);
 
-    document.documentElement.style.overflow = 'unset';
-  }
-
-  handleEscKeydown = e => {
-    const KEY_CODE = 'Escape';
-
-    if (e.key === KEY_CODE) {
-      this.props.onClose();
+  const handleBackdropClick = evt => {
+    if (evt.target === evt.currentTarget) {
+      onClose();
     }
   };
 
-  handleBackdropClick = e => {
-    if (e.target === e.currentTarget) {
-      this.props.onClose();
-    }
-  };
+  const backdropRootPortal = document.querySelector('#backdrop-root');
 
-  render() {
-    const { largeImageURL, tags } = this.props;
-    const backdropRootPortal = document.querySelector('#backdrop-root');
+  return createPortal(
+    <Overlay onClick={handleBackdropClick}>
+      <ModalWindow>
+        <img src={largeImageURL} alt={tags} />
+      </ModalWindow>
+    </Overlay>,
+    backdropRootPortal
+  );
+};
 
-    return createPortal(
-      <Overlay onClick={this.handleBackdropClick}>
-        <ModalWindow>
-          <img src={largeImageURL} alt={tags} />
-        </ModalWindow>
-      </Overlay>,
-      backdropRootPortal
-    );
-  }
-}
+Modal.propTypes = {
+  largeImageURL: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
