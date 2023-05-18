@@ -18,11 +18,11 @@ export const Modal = ({ largeImageURL, tags, onClose }) => {
     };
 
     document.addEventListener('keydown', handleEscKeydown);
-    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.overflowY = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleEscKeydown);
-      document.documentElement.style.overflow = 'unset';
+      document.documentElement.style.overflowY = 'unset';
     };
   }, [onClose]);
 
