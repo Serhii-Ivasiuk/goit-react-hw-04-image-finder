@@ -55,13 +55,14 @@ export const App = () => {
       toast.error(
         'The same request was detected. Please change you search query.'
       );
-    } else {
-      setSearchQuery(query);
-      setPage(1);
-      setData([]);
-      setErrorMessage('');
-      setEndResults(false);
+      return;
     }
+
+    setSearchQuery(query);
+    setPage(1);
+    setData([]);
+    setErrorMessage('');
+    setEndResults(false);
   };
 
   const handleLoadMore = () => {
